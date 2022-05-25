@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/song-1.mp3-ef3648cbcf5f462753f988b1ee5dcedf.mp3str"
+
+[deps]
+
+source_file="res://Sounds/song-1.mp3"
+dest_files=[ "res://.import/song-1.mp3-ef3648cbcf5f462753f988b1ee5dcedf.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

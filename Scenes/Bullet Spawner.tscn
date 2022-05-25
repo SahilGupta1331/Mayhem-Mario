@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var time_left = 0
+export var dir = 1
+export var type = 0
+
+func _process(delta):
+	if get_child_count() == 4:
+		get_child(1).queue_free()
+	time_left = $Timer.time_left
+
+func _on_Timer_timeout():
+	var bullet = preload(\"res://Scenes/Bullet.tscn\").instance()
+	bullet.dir = dir
+	bullet.get_node(\"Bullet\").frame = type
+	add_child(bullet)
+	$Timer.start()
+"
+
+[node name="Bullet Spawner" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 1.6
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

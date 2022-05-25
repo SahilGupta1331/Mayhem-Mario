@@ -1,0 +1,88 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Sprites/firepaddle.png" type="Texture" id=1]
+[ext_resource path="res://Sprites/firebladebox.png" type="Texture" id=2]
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends 'res://Scripts/Enemy.gd'
+
+func _process(delta):
+	$SpriteRot.rotate(1*delta)
+
+func _on_Area2D_area_entered(area):
+	dir.x = -dir.x
+
+func _on_Blade_body_entered(body):
+	body.die()
+"
+
+[sub_resource type="RectangleShape2D" id=9]
+extents = Vector2( 8, 8 )
+
+[sub_resource type="AtlasTexture" id=1]
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 8, 81 )
+
+[sub_resource type="AtlasTexture" id=2]
+atlas = ExtResource( 1 )
+region = Rect2( 8, 0, 8, 81 )
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 1 )
+region = Rect2( 16, 0, 8, 81 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 1 )
+region = Rect2( 24, 0, 8, 81 )
+
+[sub_resource type="SpriteFrames" id=5]
+animations = [ {
+"frames": [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ) ],
+"loop": true,
+"name": "default",
+"speed": 10.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=8]
+extents = Vector2( 4, 20 )
+
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 8, 8 )
+
+[node name="FireBlade" type="KinematicBody2D"]
+collision_mask = 0
+script = SubResource( 7 )
+gravity = false
+ACC = 10
+
+[node name="Firebladebox" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 16
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource( 9 )
+
+[node name="SpriteRot" type="Node2D" parent="."]
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="SpriteRot"]
+position = Vector2( 0, -36.5 )
+frames = SubResource( 5 )
+frame = 2
+playing = true
+
+[node name="Blade" type="Area2D" parent="SpriteRot"]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SpriteRot/Blade"]
+position = Vector2( 0, -42.5 )
+shape = SubResource( 8 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 6 )
+
+[connection signal="area_entered" from="Area2D" to="." method="_on_Area2D_area_entered"]
+[connection signal="body_entered" from="SpriteRot/Blade" to="." method="_on_Blade_body_entered"]

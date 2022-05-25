@@ -1,0 +1,78 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Sprites/togezo.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends KinematicBody2D
+
+func _process(delta):
+	randomize()
+	move_and_collide(Vector2(rand_dir()*5,2))
+
+func shoot():
+	var spike = preload(\"res://Scenes/Big Spike.tscn\").instance()
+	add_child(spike)
+	if get_child_count() > 5:
+		get_child(4).queue_free()
+
+func rand_dir():
+	if rand_range(0,10) > 5:
+		return 1
+	else:return -1
+
+func die():
+	queue_free()
+
+func _on_Area2D_body_entered(body):
+	body.die()
+
+func _on_Timer_timeout():
+	shoot()
+"
+
+[sub_resource type="AtlasTexture" id=1]
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=2]
+atlas = ExtResource( 1 )
+region = Rect2( 16, 0, 16, 16 )
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ SubResource( 1 ), SubResource( 2 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 32, 12 )
+
+[node name="Large Togezo" type="KinematicBody2D"]
+collision_layer = 4
+script = SubResource( 6 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+scale = Vector2( 4, 4 )
+frames = SubResource( 3 )
+frame = 1
+playing = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 20 )
+shape = SubResource( 4 )
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
+polygon = PoolVector2Array( -32, 8, -24, 0, -24, -16, -8, -8, 0, -24, 16, -8, 24, -16, 32, 8, 32, 16, 24, 24, 16, 32, -8, 32, -16, 24, -32, 16 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_Area2D_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

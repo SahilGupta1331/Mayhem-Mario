@@ -1,0 +1,75 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Sprites/zthwomp.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Area2D
+
+func _on_Thwomp_body_entered(body):
+	body.die()
+
+func _on_ThwompArea_body_entered(body):
+	$AnimationPlayer.play(\"kill\")
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 12, 16 )
+
+[sub_resource type="Animation" id=4]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Thwomp:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "kill"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Thwomp:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1, 3 ),
+"transitions": PoolRealArray( 1, 1, 0.5 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 0, 48 ), Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 8, 24 )
+
+[node name="ThwompArea" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = SubResource( 1 )
+
+[node name="Thwomp" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="Zthwomp" type="Sprite" parent="Thwomp"]
+texture = ExtResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Thwomp"]
+shape = SubResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 4 )
+anims/kill = SubResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 5 )
+
+[connection signal="body_entered" from="." to="." method="_on_ThwompArea_body_entered"]
+[connection signal="body_entered" from="Thwomp" to="." method="_on_Thwomp_body_entered"]
